@@ -10,7 +10,9 @@
             "homepage":"https://www.onmpw.com"
         }
     ],
-    "require": {},
+    "require": {
+        "predis/predis":"^1.1"
+    },
     "autoload":{
         "psr-4":{"Onmpw\\JiyiLog\\":"src"}
     },
