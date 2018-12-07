@@ -1,14 +1,27 @@
 {
     "name": "onmpw/jiyilog",
     "description": "Record your api access log.",
+    "version":"1.0.0",
+    "homepage":"https://github.com/onmpw/jiyilog.git",
     "authors": [
         {
             "name": "迹忆",
-            "email": "jiyi_onmpw@163.com"
+            "email": "jiyi_onmpw@163.com",
+            "homepage":"https://www.onmpw.com"
         }
     ],
     "require": {},
     "autoload":{
         "psr-4":{"Onmpw\\JiyiLog\\":"src"}
+    },
+    "extra":{
+        "laravel":{
+            "providers":[
+                "Onmpw\JiyiLog\JiyiLogServiceProvider"
+            ],
+            "aliases":{
+
+            }
+        }
     }
 }
