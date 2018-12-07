@@ -1,7 +1,7 @@
 {
     "name": "onmpw/jiyilog",
     "description": "Record your api access log.",
-    "version":"1.0.0",
+    "version":"v1.0.0",
     "homepage":"https://github.com/onmpw/jiyilog.git",
     "authors": [
         {
