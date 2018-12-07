@@ -11,5 +11,15 @@ namespace Onmpw\JiyiLog\Lib;
 
 class LogBase
 {
+    /**
+     * 记录日志
+     * @param $api
+     * @param $param
+     * @return bool
+     */
+    public function _log($api,$param)
+    {
+        return true;
+    }
 
 }

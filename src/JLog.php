@@ -9,13 +9,30 @@
 
 namespace Onmpw\JiyiLog;
 
-
 use Onmpw\JiyiLog\Lib\LogBase;
+use Request;
 
 class JLog extends LogBase
 {
-    public function store()
+    /**
+     * 存储api访问日志
+     * @param $api
+     * @param array $parameter
+     * @return bool
+     */
+    public function log($api,$parameter = [])
     {
-        echo "store";
+        $param = '';
+
+        if(empty($api)){
+            return false;
+        }
+
+        if(!empty($parameter) && is_array($parameter)){
+            $param = json_encode($parameter);
+        }
+
+        return $this->_log($api,$param);
+
     }
 }
