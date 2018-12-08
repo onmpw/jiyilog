@@ -28,6 +28,7 @@ class RedisDB
 
     public static function call($call,...$param)
     {
+        self::selectDb();  // 没有指定数据库 则使用默认的数据库
         if(empty($param)){
             $param[] = 0; // 设定参数个数为0
         }
@@ -39,7 +40,7 @@ class RedisDB
      *
      * @param $db
      */
-    public static function selectDb($db)
+    public static function selectDb($db = 0)
     {
         self::$DB = $db;
         Redis::select(self::$DB);
