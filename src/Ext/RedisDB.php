@@ -12,12 +12,37 @@ use Illuminate\Support\Facades\Redis;
 
 class RedisDB
 {
-    public static $DB = 0;
+    protected static $DB = 0;
 
-    public static function lPush($key,$value)
+    protected static $call = '';
+
+    public static $command = '';
+
+    protected static $selected = '';
+
+    public static function lPush($key,$value,$db = 0)
     {
-        Redis::select(self::$DB);
+        self::selectDb($db);
         Redis::lpush($key,$value);
+    }
+
+    public static function call($call,...$param)
+    {
+        if(empty($param)){
+            $param[] = 0; // 设定参数个数为0
+        }
+        call_user_func_array([Redis::class,'eval'],array_merge([$call],$param));
+    }
+
+    /**
+     * Select the db which you want to operate.
+     *
+     * @param $db
+     */
+    public static function selectDb($db)
+    {
+        self::$DB = $db;
+        Redis::select(self::$DB);
     }
 
 }

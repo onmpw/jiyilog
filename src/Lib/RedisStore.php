@@ -10,6 +10,7 @@
 namespace Onmpw\JiyiLog\Lib;
 
 use Onmpw\JiyiLog\Ext\RedisDB;
+use Onmpw\JiyiLog\Scripts\LuaScripts as Lua;
 
 class RedisStore extends StoreBase implements StoreContract
 {
@@ -26,7 +27,7 @@ class RedisStore extends StoreBase implements StoreContract
     }
 
     /**
-     * Build yourself data format
+     * Build your own data format
      */
     protected static function build()
     {
@@ -51,10 +52,12 @@ class RedisStore extends StoreBase implements StoreContract
      */
     protected static function handle($data)
     {
-        RedisDB::lPush($data['key'],$data['value']);
-        RedisDB::lPush($data['today'],$data['key']);
+        /**
+         * 第一个参数表示 key的个数
+         * 第二个参数为 要存放的redis 库 选择 0
+         * 其余为参数
+         */
+        RedisDB::call(Lua::storeLogEval(),1,0,$data['key'],$data['value'],$data['today']);
         return true;
     }
-
-
 }
