@@ -9,6 +9,8 @@
 
 namespace Onmpw\JiyiLog\Lib;
 
+use App;
+
 class LogBase
 {
     /**
@@ -19,7 +21,8 @@ class LogBase
      */
     public function _log($api,$param)
     {
-        return true;
+        $logObj = App::make(Log::class);
+        return $logObj->store($api,$param);
     }
 
 }

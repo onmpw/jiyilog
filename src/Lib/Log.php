@@ -11,7 +11,7 @@ namespace Onmpw\JiyiLog\Lib;
 
 use Request;
 
-class Log
+class Log implements LogContract
 {
     private $api = '';
 
@@ -63,7 +63,7 @@ class Log
      *
      * @param string $ip
      */
-    protected function setIp($ip = '')
+    public function setIp($ip = '')
     {
         if(empty($ip)) {
             $ip = Request::getClientIp();

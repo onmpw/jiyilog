@@ -10,6 +10,8 @@
 namespace Onmpw\JiyiLog;
 
 use Illuminate\Support\ServiceProvider;
+use Onmpw\JiyiLog\Lib\StoreContract;
+use Onmpw\JiyiLog\Lib\RedisStore;
 
 class JiyiLogServiceProvider extends ServiceProvider
 {
@@ -30,8 +32,8 @@ class JiyiLogServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        /*$this->app->singleton(CryptContract::class,function ($app){
-            return new MyCrypt();
-        });*/
+        $this->app->singleton(StoreContract::class,function ($app){
+            return $app->make(RedisStore::class);
+        });
     }
 }
