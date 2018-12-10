@@ -35,4 +35,30 @@ class JLog extends LogBase
         return $this->_log($api,$param);
 
     }
+
+    /**
+     * 获取从今天开始之前的range天的日期
+     * @param int $range
+     * @return array|mixed
+     */
+    public function getDays($range = 0)
+    {
+        if($range === 0){
+            return $this->_getDays();
+        }
+
+        if(is_integer($range) && $range > 0) {
+            return $this->_getDaysByRange($range);
+        }
+
+        return [];
+    }
+
+
+    public function getApi($day)
+    {
+        $day = date("Ymd",strtotime($day));
+
+        return $this->_getApi($day);
+    }
 }

@@ -25,4 +25,39 @@ class LogBase
         return $logObj->store($api,$param);
     }
 
+    /**
+     * 获取指定从今天开始往前的连续几天的日期
+     * @return mixed
+     */
+    public function _getDays()
+    {
+        $logObj = App::make(Log::class);
+
+        return $logObj->getDays();
+    }
+
+    /**
+     * 获取从今天开始前推由range指定的天数
+     * @param $range
+     * @return mixed
+     */
+    public function _getDaysByRange($range)
+    {
+        $logObj = App::make(Log::class);
+
+        return $logObj->getDaysByRange($range);
+    }
+
+    /**
+     * 获取当前日期的apilog
+     * @param $day
+     * @return array
+     */
+    public function _getApi($day)
+    {
+        $logObj = App::make(Log::class);
+
+        return $logObj->getApiByDay($day);
+    }
+
 }

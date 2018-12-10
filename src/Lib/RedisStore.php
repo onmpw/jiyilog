@@ -27,6 +27,42 @@ class RedisStore extends StoreBase implements StoreContract
     }
 
     /**
+     * Get days by the rangeDay from today
+     * @param $rangeDay
+     * @return array
+     */
+    public function getDays($rangeDay)
+    {
+        $day = date("Ymd");
+        $days = [$day];
+        for($index = 1;$index < $rangeDay;$index++){
+            $passDayNum = 0-$index;
+            $days[] = date('Ymd',strtotime("$passDayNum day",strtotime($day)));
+        }
+        return $days;
+    }
+
+    /**
+     * Get the specified day's api
+     * @param $day
+     * @return array
+     */
+    public function getApiByDay($day)
+    {
+        $api = RedisDB::call(Lua::getApiByDay(),1,0,$day,-100,-1);
+
+        //parse api format
+        $apiInfo = [];
+        while(!empty($api)){
+            $apiInfo[array_shift($api)] = ['access_time'=>array_shift($api)];
+        }
+
+        // 按照 access_time 降序排序  目前是升序的
+        $apiInfo = array_reverse($apiInfo);
+        return $apiInfo;
+    }
+
+    /**
      * Build your own data format
      */
     protected static function build()
@@ -41,7 +77,7 @@ class RedisStore extends StoreBase implements StoreContract
         // 获取当天的时间
         $today = date("Ymd",self::$data['time']);
 
-        return ['key'=>$key,'value'=>$value,'today'=>$today];
+        return [$key,$value,$today];
     }
 
     /**
@@ -57,7 +93,6 @@ class RedisStore extends StoreBase implements StoreContract
          * 第二个参数为 要存放的redis 库 选择 0
          * 其余为参数
          */
-        RedisDB::call(Lua::storeLogEval(),1,0,$data['key'],$data['value'],$data['today']);
-        return true;
+        return RedisDB::call(Lua::storeLogEval(),1,0,$data[0],$data[1],$data[2]);
     }
 }

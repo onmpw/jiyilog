@@ -22,7 +22,14 @@ class JiyiLogServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        // 加载视图
+        $this->loadViewsFrom(__DIR__.'/Views','jiyilog');
+
+        // 加载路由
+        $this->loadRoutesFrom(__DIR__."/route.php");
+
+        // 加载数据库Migration
+        $this->loadMigrationsFrom(__DIR__."/Migrations");
     }
 
     /**

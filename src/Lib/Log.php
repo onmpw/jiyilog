@@ -21,6 +21,8 @@ class Log implements LogContract
 
     private $storeObj;
 
+    private $rangeDay = 5;
+
 
     public function __construct(StoreContract $store)
     {
@@ -47,6 +49,30 @@ class Log implements LogContract
         $this->setIp($ip);
 
         $this->handle();
+    }
+
+    public function getDays()
+    {
+        return $this->storeObj->getDays($this->rangeDay);
+    }
+
+    public function getDaysByRange($range = 0)
+    {
+        if($range === 0){
+            return $this->getDays();
+        }
+
+        if(is_integer($range) && $range > 0){
+            $this->rangeDay = $range;
+        }
+
+        return $this->getDays();
+
+    }
+
+    public function getApiByDay($day)
+    {
+        return $this->storeObj->getApiByDay($day);
     }
 
     /**

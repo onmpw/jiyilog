@@ -32,7 +32,7 @@ class RedisDB
         if(empty($param)){
             $param[] = 0; // 设定参数个数为0
         }
-        call_user_func_array([Redis::class,'eval'],array_merge([$call],$param));
+        return call_user_func_array([Redis::class,'eval'],array_merge([$call],$param));
     }
 
     /**
