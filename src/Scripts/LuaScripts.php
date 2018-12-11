@@ -32,6 +32,8 @@ end
 apiNum = apiNum + 1
 redis.call("zadd",ARGV[3],apiNum,ARGV[1])
 
+redis.call('zadd','JIYILOG_API_TIME_SET',0,ARGV[3])
+
 return true
 LUA;
     }
@@ -40,12 +42,26 @@ LUA;
     {
         return <<<'LUA'
 -- Select db which you want to get data from
--- redis.call('select',KEYS[1])
+redis.call('select',KEYS[1])
 
 -- Get Day ApiList
 local api = redis.call('zrange',ARGV[1],ARGV[2],ARGV[3],'WITHSCORES')
 
 return api
+LUA;
+
+    }
+
+    public static function getApiInfo()
+    {
+        return <<<'LUA'
+-- Select db which you want to get api from
+redis.call('select',KEYS[1])
+
+-- Gets information about the api
+local info = redis.call('lrange',ARGV[1],ARGV[2],ARGV[3])
+
+return info
 LUA;
 
     }

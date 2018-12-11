@@ -10,6 +10,7 @@
 namespace Onmpw\JiyiLog;
 
 use Illuminate\Support\ServiceProvider;
+use Onmpw\JiyiLog\Commands\Log;
 use Onmpw\JiyiLog\Lib\StoreContract;
 use Onmpw\JiyiLog\Lib\RedisStore;
 
@@ -30,6 +31,13 @@ class JiyiLogServiceProvider extends ServiceProvider
 
         // 加载数据库Migration
         $this->loadMigrationsFrom(__DIR__."/Migrations");
+
+        // 加载命令
+        if($this->app->runningInConsole()){
+            $this->commands([
+                Log::class
+            ]);
+        }
     }
 
     /**

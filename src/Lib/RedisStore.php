@@ -20,7 +20,7 @@ class RedisStore extends StoreBase implements StoreContract
 
     public function store()
     {
-        // 解析要存储的数据
+        // Parses the data to be stored.
         $this->parseData();
 
         parent::_store();
@@ -43,7 +43,8 @@ class RedisStore extends StoreBase implements StoreContract
     }
 
     /**
-     * Get the specified day's api
+     * Gets the api list for the specified date
+     *
      * @param $day
      * @return array
      */
@@ -57,13 +58,57 @@ class RedisStore extends StoreBase implements StoreContract
             $apiInfo[array_shift($api)] = ['access_time'=>array_shift($api)];
         }
 
-        // 按照 access_time 降序排序  目前是升序的
+        // Sort in desc order of access_time,currently in ascending order.
         $apiInfo = array_reverse($apiInfo);
         return $apiInfo;
     }
 
     /**
-     * Build your own data format
+     * Gets information about the specified Api
+     *
+     * @param $api
+     * @return mixed
+     */
+    public function getApiInfo($api)
+    {
+        $infoList = RedisDB::call(Lua::getApiInfo(),1,0,$api,0,-1);
+
+        // parse data
+        $infoList = array_map(function($info){
+            $info = json_decode($info,true);
+            if(is_array($info['access_param'])){
+                $info['access_param'] = json_encode($info['access_param']);
+            }
+
+            if(strlen($info['access_param']) > 150){
+                $info['access_param_abstract'] = substr($info['access_param'],0,150)."...";
+                $info['stack'] = true;
+            }else{
+                $info['access_param_abstract'] = $info['access_param'];
+                $info['stack'] = false;
+            }
+
+            return $info;
+        },$infoList);
+
+        return $infoList;
+    }
+
+    public function getApiToday($today)
+    {
+        $day = date("Ymd",strtotime($today));
+        $apiList = RedisDB::ZRange($today,0,-1,true);
+
+        $apiInfo = [];
+        foreach($apiList as $api=>$num){
+            $apiInfo[$api] = RedisDB::LRange($api,0,$num-1);
+        }
+        dd($apiInfo);
+        return $apiList;
+    }
+
+    /**
+     * Build your own data format.
      */
     protected static function build()
     {
@@ -74,7 +119,7 @@ class RedisStore extends StoreBase implements StoreContract
             'access_param'=>self::$data['param']
         ]);
 
-        // 获取当天的时间
+        // Get the time of day.
         $today = date("Ymd",self::$data['time']);
 
         return [$key,$value,$today];
@@ -89,9 +134,11 @@ class RedisStore extends StoreBase implements StoreContract
     protected static function handle($data)
     {
         /**
-         * 第一个参数表示 key的个数
-         * 第二个参数为 要存放的redis 库 选择 0
-         * 其余为参数
+         * The first parameter represents the number of keys
+         * --------------------------------------------------
+         * The second parameter represents that which db to store data
+         * ---------------------------------------------------
+         * The last is the data you want to operate
          */
         return RedisDB::call(Lua::storeLogEval(),1,0,$data[0],$data[1],$data[2]);
     }

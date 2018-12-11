@@ -26,6 +26,23 @@ class RedisDB
         Redis::lpush($key,$value);
     }
 
+    public static function LRange($key,$start,$stop,$db=0)
+    {
+        self::selectDb();
+        return Redis::lrange($key,$start,$stop);
+    }
+
+    public static function ZRange($key,$start,$stop,$withScores = false)
+    {
+        self::selectDb();
+        if($withScores){
+            $res = Redis::zrange($key,$start,$stop,'WITHSCORES');
+        }else{
+            $res = Redis::zrange($key,$start,$stop);
+        }
+        return $res;
+    }
+
     public static function call($call,...$param)
     {
         self::selectDb();  // 没有指定数据库 则使用默认的数据库

@@ -70,9 +70,36 @@ class Log implements LogContract
 
     }
 
+    /**
+     * Gets the api list for the specified date
+     *
+     * @param $day
+     * @return mixed
+     */
     public function getApiByDay($day)
     {
         return $this->storeObj->getApiByDay($day);
+    }
+
+    /**
+     * Gets information about the specified Api
+     *
+     * @param $api
+     * @return mixed
+     */
+    public function getApiInfo($api)
+    {
+        return $this->storeObj->getApiInfo($api);
+    }
+
+    /**
+     *
+     * @param $today
+     * @return mixed
+     */
+    public function backUp($today)
+    {
+        return $this->storeObj->getApiToday($today);
     }
 
     /**
@@ -156,5 +183,6 @@ class Log implements LogContract
     {
         return $this->ip;
     }
+
 
 }

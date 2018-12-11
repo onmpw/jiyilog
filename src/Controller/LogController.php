@@ -41,4 +41,21 @@ class LogController extends Controller
         return view("jiyilog::showlog",compact('logs','standardFormat','days','current_day'));
     }
 
+    public function viewLog(Request $request)
+    {
+        $api = $request->k??'';
+
+        if(!empty($api)){
+            $api = Crypt::decrypt($api);
+        }
+
+        $standardFormat = true;
+
+        // 获取单个api的详情
+        $log = new JLog();
+        $apiInfo = $log->getApiInfo($api);
+
+        return view("jiyilog::viewlog",compact('api','apiInfo','standardFormat'));
+    }
+
 }

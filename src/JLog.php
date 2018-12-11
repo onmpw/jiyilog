@@ -10,6 +10,8 @@
 namespace Onmpw\JiyiLog;
 
 use Onmpw\JiyiLog\Lib\LogBase;
+use App;
+use Onmpw\JiyiLog\Lib\Log;
 use Request;
 
 class JLog extends LogBase
@@ -30,6 +32,8 @@ class JLog extends LogBase
 
         if(!empty($parameter) && is_array($parameter)){
             $param = json_encode($parameter);
+        }elseif(is_string($parameter)){
+            $param = $parameter;
         }
 
         return $this->_log($api,$param);
@@ -60,5 +64,19 @@ class JLog extends LogBase
         $day = date("Ymd",strtotime($day));
 
         return $this->_getApi($day);
+    }
+
+    public function getApiInfo($api)
+    {
+        $logObj = App::make(Log::class);
+
+        return $logObj->getApiInfo($api);
+    }
+
+    public function backUp($today)
+    {
+        $logObj = App::make(Log::class);
+
+        return $logObj->backUp($today);
     }
 }

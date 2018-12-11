@@ -95,7 +95,7 @@
 
                     @foreach($logs as $key => $log)
                         <tr data-display="stack{{{$key}}}">
-                            <td class="text"><span>{{{$key}}}</span></td>
+                            <td class="text"><a href="/viewlog?k={{ \Illuminate\Support\Facades\Crypt::encrypt($key) }}">{{{$key}}}</a></td>
                             <td class="date">{{{$log['access_time']}}}</td>
                         </tr>
                     @endforeach

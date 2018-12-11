@@ -7,4 +7,6 @@
  * Time: 17:41
  */
 
-Route::get('/showlog','Onmpw\JiyiLog\Controller\LogController@showlog');
+Route::get('/showlog','Onmpw\JiyiLog\Controller\LogController@showLog');
+
+Route::get('/viewlog','Onmpw\JiyiLog\Controller\LogController@viewlog');

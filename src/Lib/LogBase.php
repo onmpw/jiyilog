@@ -60,4 +60,18 @@ class LogBase
         return $logObj->getApiByDay($day);
     }
 
+    /**
+     * 获取指定api的详情
+     * @param $api
+     * @return array
+     */
+    public function _getApiInfo($api)
+    {
+        $logObj = App::make(Log::class);
+
+        return $logObj->getApiInfo($api);
+    }
+
+
+
 }
