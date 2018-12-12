@@ -32,7 +32,7 @@ end
 apiNum = apiNum + 1
 redis.call("zadd",ARGV[3],apiNum,ARGV[1])
 
-redis.call('zadd','JIYILOG_API_TIME_SET',0,ARGV[3])
+redis.call('zadd',ARGV[4],0,ARGV[3])
 
 return true
 LUA;
@@ -62,6 +62,26 @@ redis.call('select',KEYS[1])
 local info = redis.call('lrange',ARGV[1],ARGV[2],ARGV[3])
 
 return info
+LUA;
+
+    }
+
+    public static function getToDelDays()
+    {
+        return <<<'LUA'
+-- Select db which you want to get days from
+redis.call('select',KEYS[1])
+
+-- How many days are there in total.
+local count = redis.call('zcount','JIYILOG_API_TIME_SET','-inf','+inf')
+
+local retainDays = tonumber(ARGV[1])
+local days = {}
+if(count > retainDays) then
+    local stop=count-retainDays-1
+    days = redis.call('zrange',ARGV[2],0,stop)
+end
+return days
 LUA;
 
     }

@@ -52,11 +52,13 @@ class Log extends Command
         /*
          * Backup today's log to the database
          */
+        $log = new JLog();
         if($operate == 'backup'){
             // Get today's date
             $today = date("Ymd");
-            $log = new JLog();
             $log->backUp($today);
+        }elseif($operate == 'range'){
+            $log->neatenLog(1);
         }
     }
 }

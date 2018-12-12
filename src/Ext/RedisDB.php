@@ -43,6 +43,24 @@ class RedisDB
         return $res;
     }
 
+    public static function RPop($api)
+    {
+        self::selectDb();
+        Redis::rpop($api);
+    }
+
+    public static function del($key)
+    {
+        self::selectDb();
+        Redis::del($key);
+    }
+
+    public static function ZRem($key,$member)
+    {
+        self::selectDb();
+        Redis::zrem($key,$member);
+    }
+
     public static function call($call,...$param)
     {
         self::selectDb();  // 没有指定数据库 则使用默认的数据库
@@ -51,6 +69,7 @@ class RedisDB
         }
         return call_user_func_array([Redis::class,'eval'],array_merge([$call],$param));
     }
+
 
     /**
      * Select the db which you want to operate.

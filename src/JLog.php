@@ -58,7 +58,12 @@ class JLog extends LogBase
         return [];
     }
 
-
+    /**
+     * 获取api列表
+     *
+     * @param $day
+     * @return array
+     */
     public function getApi($day)
     {
         $day = date("Ymd",strtotime($day));
@@ -66,6 +71,12 @@ class JLog extends LogBase
         return $this->_getApi($day);
     }
 
+    /**
+     * 获取api详情
+     *
+     * @param $api
+     * @return mixed
+     */
     public function getApiInfo($api)
     {
         $logObj = App::make(Log::class);
@@ -73,10 +84,27 @@ class JLog extends LogBase
         return $logObj->getApiInfo($api);
     }
 
+    /**
+     * 备份
+     * @param $today
+     * @return mixed
+     */
     public function backUp($today)
     {
         $logObj = App::make(Log::class);
 
         return $logObj->backUp($today);
+    }
+
+    /**
+     * 整理日志 只保留最近几天的
+     * @param int $retainDays 指定保留的天数
+     * @return mixed
+     */
+    public function neatenLog($retainDays = 5)
+    {
+        $logObj = App::make(Log::class);
+
+        return $logObj->neatenLog($retainDays);
     }
 }

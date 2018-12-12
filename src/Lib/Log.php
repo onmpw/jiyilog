@@ -10,6 +10,7 @@
 namespace Onmpw\JiyiLog\Lib;
 
 use Request;
+use Onmpw\JiyiLog\Models\JiyiLog;
 
 class Log implements LogContract
 {
@@ -93,13 +94,38 @@ class Log implements LogContract
     }
 
     /**
+     * Backup today's data to database.
      *
      * @param $today
      * @return mixed
      */
     public function backUp($today)
     {
-        return $this->storeObj->getApiToday($today);
+        $apiInfo = $this->storeObj->getApiToday($today);
+
+        $insertData = [];
+        foreach($apiInfo as $api=>$info){
+            foreach($info as $res){
+                $res = json_decode($res,true);
+                $res['api_name'] = $api;
+                $insertData[] = $res;
+            }
+        }
+        return JiyiLog::store($insertData);
+    }
+
+    /**
+     * Arrange the log and keep only the last 5 days
+     *
+     * @param int $retainDays
+     * @return mixed
+     */
+    public function neatenLog($retainDays = 5)
+    {
+        $days = $this->storeObj->getToDelDays($retainDays);
+
+        $res = $this->storeObj->neatenLog($days);
+        return $res;
     }
 
     /**

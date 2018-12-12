@@ -14,10 +14,15 @@ use Onmpw\JiyiLog\Scripts\LuaScripts as Lua;
 
 class RedisStore extends StoreBase implements StoreContract
 {
+    const APITIMESETNAME = 'JIYILOG_API_TIME_SET';
+
     public function __construct(){
         parent::__construct();
     }
 
+    /**
+     * Store Api
+     */
     public function store()
     {
         // Parses the data to be stored.
@@ -27,7 +32,8 @@ class RedisStore extends StoreBase implements StoreContract
     }
 
     /**
-     * Get days by the rangeDay from today
+     * Get days by the rangeDay from today.
+     *
      * @param $rangeDay
      * @return array
      */
@@ -94,17 +100,66 @@ class RedisStore extends StoreBase implements StoreContract
         return $infoList;
     }
 
+    /**
+     * Gets today's api information
+     *
+     * @param $today
+     * @return array
+     */
     public function getApiToday($today)
     {
         $day = date("Ymd",strtotime($today));
-        $apiList = RedisDB::ZRange($today,0,-1,true);
+        $apiList = RedisDB::ZRange($day,0,-1,true);
 
         $apiInfo = [];
         foreach($apiList as $api=>$num){
             $apiInfo[$api] = RedisDB::LRange($api,0,$num-1);
         }
-        dd($apiInfo);
-        return $apiList;
+        return $apiInfo;
+    }
+
+    /**
+     * Gets the day to delete.
+     *
+     * @param $retainDays
+     * @return mixed
+     */
+    public function getToDelDays($retainDays)
+    {
+        $days = RedisDB::call(Lua::getToDelDays(),1,0,$retainDays,self::APITIMESETNAME);
+        return $days;
+    }
+
+    /**
+     * Arrange the log.
+     *
+     * @param $days
+     */
+    public function neatenLog($days)
+    {
+        // First clean everyday's api log
+        foreach($days as $day)
+        {
+            $apiInfo = RedisDB::ZRange($day,0,-1,true);
+
+            foreach($apiInfo as $api=>$accessNum){
+                $this->popApi($api,$accessNum);
+            }
+
+            // clean day info
+            RedisDB::del($day);
+
+            // del day from time set
+            RedisDB::ZRem(SELF::APITIMESETNAME,$day);
+        }
+    }
+
+    protected function popApi($api,$accessNum)
+    {
+        for($num = 0;$num<$accessNum;$num++){
+            RedisDB::RPop($api);
+        }
+        return ;
     }
 
     /**
@@ -140,6 +195,6 @@ class RedisStore extends StoreBase implements StoreContract
          * ---------------------------------------------------
          * The last is the data you want to operate
          */
-        return RedisDB::call(Lua::storeLogEval(),1,0,$data[0],$data[1],$data[2]);
+        return RedisDB::call(Lua::storeLogEval(),1,0,$data[0],$data[1],$data[2],self::APITIMESETNAME);
     }
 }
